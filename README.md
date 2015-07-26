@@ -1,2 +1,1 @@
-# lsrefactoring
-refactoring
+acomer es una aplicación para búsqueda de platos y restaurantes

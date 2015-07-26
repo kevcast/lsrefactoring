@@ -1,0 +1,221 @@
+<script type="text/javascript" src="<?php echo $this->host('ruta')?>/js/easySlider1.7.js"></script>
+<div class="masinfo">
+  <a href="#cate-home" id="ver"><img src="<?php echo $this->host('ruta')?>/img/scroll.png?v<?php echo $this->host('version')?>" alt=""></a>
+</div>
+<div class="subir">
+  <a href="#top"><img src="<?php echo $this->host('ruta')?>/img/scroll-top.png?v<?php echo $this->host('version')?>" alt=""></a>
+</div>
+<div class="map-portada">
+ <div class="guia-home">
+    <!--<section id="paso-dos">
+      <div id="opacidad" style="display: block;"></div>
+    </section>-->
+    <section id="paso-tres" style="margin-top: 0px;margin-bottom:10px;float:left;">
+      <!--<div class="nav-banner">
+        <ul class="dep-home" style="float:left;">
+          <li>
+            <div class="paso1 paso">
+              <p>Busca</p>
+            </div>
+          </li>
+          <li>
+            <div class="paso2 paso">
+              <p>Encuentra</p>
+            </div>
+          </li>
+         
+          <li>
+            <div class="paso3 paso">
+              <p>Comenta</p>
+            </div>
+          </li>
+        </ul>
+        
+      </div>-->
+      <div class="center-dos">
+        <div id="slider">
+          <ul>   
+          <?php 
+          foreach ($this->banner  as $banner) :
+          ?>
+          <?php if($banner['va_url']) {?>
+          <li><a href="<?php echo $this->host('ruta')?><?php echo $banner['va_url'] ?>"><img src="<?php echo $this->host('images')?>/banner/<?php echo $banner['va_imagen'] ?>" title="<?php echo $banner['va_nombre'] ?>" alt="banner restaurantes" /></a></li>         
+              <?php  } else { ?>
+                <li><img src="<?php echo $this->host('images')?>/banner/<?php echo $banner['va_imagen'] ?>" title="<?php echo $banner['va_nombre'] ?>" alt="banner restaurantes" /></li>
+              <?php  } ?>
+         <?php endforeach; ?>     
+          </ul>
+        </div>
+      </div>
+      <div class="content-menu-home">
+        <ul>
+          <?php 
+          foreach ($this->menus  as $menus) :
+          ?>
+          <li><a href="<?php echo $this->host('ruta')?><?php echo $menus['va_url'] ?>"><?php echo $menus['va_nombre'] ?></a></li>          
+          <?php endforeach; ?>
+        </ul>
+      </div>
+      <!--<section class="center-dos">      
+        <div id="box-btn-platos-verdura" style="margin-left: php440px;">
+          <a id="lomosaltado-btn" title="Lomo saltado" class="platos-btn" href="<?php echo $this->host('ruta')?>/buscar-por-distrito?q=lomo saltado">
+            <img src="<?php echo $this->host('ruta')?>/img/bann/lomosaltado.png">
+          </a>
+          <a id="sopadezapallo-btn" title="Causa" class="platos-btn" href="<?php echo $this->host('ruta')?>/buscar-por-distrito?q=causa">
+            <img src="<?php echo $this->host('ruta')?>/img/bann/causa.png">
+          </a>
+          <a id="guisoverdura-btn" title="Parrilla" class="platos-btn" href="<?php echo $this->host('ruta')?>/buscar-por-distrito?q=parrilla">
+            <img src="<?php echo $this->host('ruta')?>/img/bann/parrilla.png">
+          </a>
+          <a id="wok-btn" title="Ceviche" class="platos-btn" href="<?php echo $this->host('ruta')?>/buscar-por-distrito?q=makis">
+            <img src="<?php echo $this->host('ruta')?>/img/bann/makis.png">
+          </a>
+        </div>
+        <a id="plato-verdura-wok" class="caja-platos port-general" href="<?php echo $this->host('ruta')?>/buscar-por-distrito?q=ceviche" style="display:block;" title="Ceviche">
+          <img src="<?php echo $this->host('ruta')?>/img/bann/ceviche-e.png">
+        </a>
+        <div id="btn-continua2" style="display: block;"></div>
+      </section>-->
+    </section>
+</div>
+  
+  <div class="descrip-product">
+   <?php if($this->promociones){ ?>
+    <div class="sub subir-home" id="subir-home">
+     
+    </div>
+    <div class="recomendados-platos primer-home" style="padding-bottom: 90px;">
+      <ul id="contenedor-pl">
+        <?php  foreach ($this->promociones  as $promo){
+          
+          if(strlen($promo['va_nombre'])>27){
+           $strnom=trim(substr($promo['va_nombre'], 0, 24));
+            $strnom.='...';
+           }else {$strnom=$promo['va_nombre'];} ?>
+          <li class="elemento-pl">
+            <div class="plato_r">
+              <div class="mosaic-block cover">
+                <a href="/plato/<?php echo $this->canonicalUrl($this->canonical($promo['restaurant_nombre'])) ?>/<?php echo $this->canonicalUrl($this->canonical($promo['va_nombre']), array('suffix' => $promo['id']));?>" class="mosaic-backdrop" title="<?php echo $promo['va_nombre'];?>" alt="<?php echo $promo['va_nombre'];?>">
+                  <div class="mosaic-overlay">
+                    <span><?php echo htmlspecialchars($strnom, ENT_QUOTES, 'utf-8'); ?></span>
+                    <img src="<?php if ($promo['va_imagen']=='platos-default.png')
+                        {echo $this->host('images') . '/defecto/' . htmlspecialchars($promo['va_imagen'], ENT_QUOTES, 'utf-8');}
+                    else
+                        {echo $this->host('images') . '/plato/destacado/' . htmlspecialchars($promo['va_imagen'], ENT_QUOTES, 'utf-8');} ?>" title="<?php echo $promo['va_nombre'];?>" alt="<?php echo $promo['va_nombre'];?>" class="img-plato">
+                  </div>
+                </a>
+              </div>
+              <div class="foo">
+                <div class="pt">
+                  <p class="com">
+                    <?php echo $promo['NumeroComentarios'] ?>  
+                    <a href="/plato/<?php echo $this->canonicalUrl($this->canonical($promo['restaurant_nombre']))?>/<?php echo $this->canonicalUrl($this->canonical($promo['va_nombre']), array('suffix' => $promo['id']));?>" title="ver todos los comentarios" alt="<?php echo $promo['va_nombre'];?>"><i class="icon-comment"></i></a>
+                    </p>
+                  <div class="punt">
+                    <div class="puntuaciones c<?php echo $promo['Ta_puntaje_in_id'];?>"></div>
+                  </div>
+                </div>
+                <p class="nom_res">
+                  <a href="/plato/<?php echo $this->canonicalUrl($this->canonical($promo['restaurant_nombre']))?>/<?php echo $this->canonicalUrl($this->canonical($promo['va_nombre']), array('suffix' => $promo['id']));?>" title="<?php echo $promo['restaurant_nombre'];?>" alt="<?php echo $promo['va_nombre'];?>"><?php 
+                     if(strlen($promo['restaurant_nombre'])>29){
+                     $strres=trim(substr($promo['restaurant_nombre'], 0, 26));
+                      $strres.='...';
+                     }else {$strres=$promo['restaurant_nombre'];}
+                echo htmlspecialchars($strres, ENT_QUOTES, 'utf-8'); ?></a>
+                </p>
+                <p class="h-dist"><?php echo $promo['Distrito'];?>  (<?php echo $promo['Departamento'];?>)</p>
+                <p class="dire-hom"><?php echo $promo['direccion']; ?>
+                </p>
+                <p class="dire-hom"><em class="iphone-dl"><?php  $telefono =  explode(';', $promo['telefono']);                
+                echo htmlspecialchars($telefono[0], ENT_QUOTES, 'utf-8'); ?></em></p>
+              </div>
+            </div>
+          </li> 
+          <?php } ?>
+      </ul>
+ 
+    <div class="pagination" role="navigation" style="display:none">
+                    
+       <?php if($this->cantidad){
+            if ($this->cantidad % 9 == 0)
+            {
+        {for($i=0;$i<=$this->cantidad;$i+=9)
+           { if((int)(($i/9)+1)!=1) {?>  
+               <a href="/?page=<?php echo (int)(($i/9))?>" ><?php echo ((int)($i/9))?></a><?php
+               } } }
+          }else{{for($i=0;$i<=$this->cantidad+9;$i+=9)
+           { if((int)(($i/9)+1)!=1) {?>  
+               <a href="/?page=<?php echo (int)(($i/9))?>" ><?php echo ((int)($i/9))?></a><?php
+               }} }}}?> 
+    </div> </div>
+    <?php 
+      } ?>
+  </div>
+
+</div>
+
+
+<script type="text/javascript">
+  $(document).ready(function(){ 
+    $("#slider").easySlider({
+      auto: true, 
+      continuous: true,
+      speed: 800,
+      pause: 5000
+    });
+
+    var windw = this;
+    $.fn.followTo = function (pos) {
+      var $this = this,
+      $window = $(windw);
+      $window.scroll(function(e){
+        if ($window.scrollTop() > pos) {
+          $this.css({
+            position: 'fixed',
+            top: 0
+          });
+        } else {
+          $this.css({
+            position: 'relative',
+            top: 0
+          });
+        }
+      });
+    };
+    $('.content-menu-home').followTo(250);
+
+    $(function(){
+        var $container = $('#contenedor-pl');
+        $container.isotope({
+          itemSelector : '.elemento-pl',
+          resizable: false,
+          masonry: {columnWidth:$container.width()/3}
+        });
+        $(window).smartresize(function(){
+          $container.isotope({
+            masonry: {columnWidth: $container.width() / 3}
+          });
+        });
+        $container.infinitescroll({
+          navSelector  : '.pagination',    // selector for the paged navigation 
+          nextSelector : '.pagination a',  // selector for the NEXT link (to page 2)
+          itemSelector : '.elemento-pl',     // selector for all items you'll retrieve
+          binder: $(window),
+          loading: {
+              finishedMsg: 'No more pages to load.',
+              img: 'http://i.imgur.com/qkKy8.gif'
+            }
+          },
+          // call Isotope as a callback
+          function( newElements ) {
+            $container.isotope( 'appended', $( newElements ) );
+          }
+        );
+      });
+
+  });
+
+</script>
+
+
+

@@ -1,0 +1,261 @@
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#mapa-buscador").hide();
+  });
+</script>
+<?php
+$this->headTitle($this->busquedatitle);           
+if((count($this->general)>0))                       
+  {
+?>
+    <div id="esconder2">
+        <?php if ($session) { ?>
+      <div class="content-menu-home" style="position:fixed;top:0px;">
+          <?php } else {  ?>
+          <div class="content-menu-home" style="position:fixed;top:35px;"> 
+          <?php  } ?>
+          
+        <ul>
+          <?php foreach ($this->menus  as $menus) : ?>
+            <li><a href="<?php echo $this->host('ruta')?><?php echo $menus['va_url'] ?>"><?php echo $menus['va_nombre'] ?></a></li>          
+          <?php endforeach; ?>
+        </ul>
+      </div>
+
+        <?php if(ucwords($this->plato)=='mistura' or ucwords($this->plato)=='Mistura') {?>
+        <div class="sub mistura_etiqueta" style="margin-top:30px;">
+          <span style="padding-left: 10px;color:white;font-weight: bold;"><?php echo  ucwords($this->plato).' 2013'; ?></span>
+        </div> 
+        <?php } else { ?>
+        <div class="sub1" style="margin-top:30px;">
+          <span style="padding-left: 10px;color:#ff8400;font-weight: bold;"><?php echo  ucwords($this->plato); ?></span>
+        </div> 
+        <?php } ?>
+          <div class="plato_h p">
+          <?php echo $this->mostrar; ?>
+          <?php //
+          $form = $this->form;
+          //$form->setAttribute('action', $this->url('usuario', array('action' => 'add')));
+          $form->setAttributes(array(
+              'action' => $this->url.'/buscar',
+              'method' => 'get'
+          ));
+          $form->prepare();
+          echo $this->form()->openTag($form);
+          ?>
+          <?php echo $this->formRow($form->get('distrito'));?>
+          <?php echo $this->formRow($form->get('q'));?>
+          <?php echo $this->formSubmit($form->get('submit'));?>
+          <a class="ver_mapa" style="margin-left: 10px;" class="disabled" id="buscarmap" disabled>Resultados en mapa</a>
+          <!--<div class="return">
+              <a href="javascript:window.history.back();" onclick="regresar()">Regresar</a>
+           </div>-->
+          <?php
+          echo $this->form()->closeTag(); ?>
+        </div>   
+        <div id="content-menu-list"> 
+        <?php foreach ($this->general as $doc) : ?>
+           
+        <?php 
+           if($doc->en_destaque=='si'){  ?>
+           <div class="plato_h plato_h_list destacado-plato">
+           <?php  } else { ?>
+           <div class="plato_h plato_h_list">
+            <?php  } ?>
+                   <input type="hidden" name="pun" data-id="<?php echo htmlspecialchars($doc->id, ENT_QUOTES, 'utf-8'); ?>"value="<?php echo htmlspecialchars($doc->puntuacion, ENT_QUOTES, 'utf-8');?>">
+                   <div class="lateral" >                    
+                   <a href="/plato/<?php echo $this->canonicalUrl($this->canonical($doc->restaurante))?>/<?php echo $this->canonicalUrl($this->canonical($doc->name), array('suffix' => $doc->id));?>" title="<?php echo $doc->name;?>" alt="<?php echo $doc->name;?>">
+                                  <img src="<?php if($doc->va_imagen=='platos-default.png')
+                        { echo $this->host('images') . '/defecto/' . htmlspecialchars($doc->va_imagen, ENT_QUOTES, 'utf-8');}
+                        else
+                    {  echo $this->host('images') . '/plato/general/' . htmlspecialchars($doc->va_imagen, ENT_QUOTES, 'utf-8'); } ?>" style="border:0;" title="<?php echo $doc->name;?>" alt="<?php echo $doc->name;?>">
+                    </a>
+                    </div>
+                    <div class="detalle-restaurante">
+                      <div class="left-resultado">
+                        <p class="nombre_r">
+                          <a href="/plato/<?php echo $this->canonicalUrl($this->canonical($doc->restaurante))?>/<?php echo $this->canonicalUrl($this->canonical($doc->name), array('suffix' => $doc->id));?>" alt="<?php echo $doc->name;?>" title="<?php echo $doc->name;?>"><?php 
+                            if(strlen($doc->restaurante)>44){
+                            $str=trim(substr($doc->restaurante, 0, 43));
+                            $str.='.';
+                            }else {$str=$doc->restaurante;}       
+                            echo htmlspecialchars($str, ENT_QUOTES, 'utf-8'); ?>
+                          </a>
+                        </p>
+                        <p class="nom_plato"><?php echo htmlspecialchars($doc->name, ENT_QUOTES, 'utf-8'); ?></p>
+                        <div class="punt" style="width:100%!important;text-align:left;">
+                          <div style="float:left!important;margin-left: 10px;" class="puntuaciones c<?php echo htmlspecialchars($doc->puntuacion, ENT_QUOTES, 'utf-8');?>" style="margin: 0px;width: 118px !important;display:inline-block;"></div>
+                          <em><?php echo htmlspecialchars($doc->comentarios, ENT_QUOTES, 'utf-8'); ?><i class="icon-comment"></i></em>
+                        </div>
+                        <p style="margin-left:10px;margin-top:5px;"><?php echo htmlspecialchars($doc->tx_descripcion, ENT_QUOTES, 'utf-8'); ?></p>
+                      </div>
+                      <div class="right-resultado">
+                        <p class="h-dist"><?php echo htmlspecialchars($doc->distrito, ENT_QUOTES, 'utf-8').'  ('.htmlspecialchars($doc->departamento, ENT_QUOTES, 'utf-8').')' ?></p>
+                       
+                        <p><?php echo htmlspecialchars($doc->va_direccion, ENT_QUOTES, 'utf-8'); ?></p>
+                        <p><?php echo htmlspecialchars($doc->va_telefono, ENT_QUOTES, 'utf-8'); ?></p>
+                      </div> 
+                    </div>
+
+                </div>
+                
+          <?php endforeach; ?>  
+    </div>
+  </div> 
+    <div class="pagination" role="navigation" style="display:none;">
+                    
+       <?php if($this->total){
+           $pagina = $_GET['page'];
+         if (!$pagina) {  echo '';  
+         }    else{ if($pagina-1>=0 ){?> <?php } }
+         if ($this->total % 10 == 0)
+        {{for($i=0;$i<=$this->total-1;$i+=10)
+           { if((int)(($i/10)+1)!=1) {?>  
+               <a href="buscar-por-distrito?distrito=<?php echo $this->canonical2($this->distrito) ?>&q=<?php echo  $this->canonical2($this->plat)?>&page=<?php echo (int)(($i/10)+1)?>" ><?php echo ((int)($i/10)+1)?></a><?php
+               } else {?> <span>1</span> <?php }} }}
+           else{{for($i=0;$i<=$this->total;$i+=10)
+           { if((int)(($i/10)+1)!=1) {?> 
+               <a href="buscar-por-distrito?distrito=<?php echo $this->canonical2($this->distrito)?>&q=<?php echo  $this->canonical2($this->plat)?>&page=<?php echo (int)(($i/10)+1)?>" ><?php echo ((int)($i/10)+1)?></a><?php
+            }else {?> <span>1</span> <?php } }} }
+          if ($this->total % 10 == 1){ 
+           if (!$pagina and $this->total-1>10) { 
+           $pagina =1;  
+          if($pagina+1<=$this->total-1){?> <?php }     
+       }   elseif($pagina and $this->total-1>10){ $pagina = $_GET['page'];   if($pagina+1<=(int)($this->total/10-1)){?> <?php }     
+      }else{echo '';}
+          }
+ 
+          }?> 
+       
+    </div>
+
+      <div id="mapa-buscador" style="display:none;">
+        <div class="regresar regr">
+          <div class="return">
+            <a href="javascript:window.history.back();" onclick="regresar()">Regresar</a>
+         </div>
+        </div>
+     </div>
+  <?php } else {?>
+  <div class="descrip-product">
+    <div class="content-menu-home" style="position:fixed;top:0;">
+      <ul>
+        <?php foreach ($this->menus  as $menus) : ?>
+          <li><a href="<?php echo $this->host('ruta')?><?php echo $menus['va_url'] ?>"><?php echo $menus['va_nombre'] ?></a></li>          
+        <?php endforeach; ?>
+      </ul>
+    </div>
+    <div id="error-mensaje" style="margin-top:55px;">       
+      <p class="mensaje">"Lamentamos no haber encontrado lo que estabas buscando pero tenemos muchas mas opciones para ti."</p>
+      <p class="mensaje2">También tenemos una opción para que nos escribas si deseas registrar un nuevo plato.</p> 
+    </div>
+      <div class="sub subir-home" id="subir-home">
+        <div class="content-etiqueta-home">
+          <p>Platos destacados</p>
+        </div>
+      </div>
+      <div id ="error"><?php $this->mama;?></div>
+    <div class="recomendados-platos primer-home" style="padding-bottom: 90px;">
+        <ul>
+           <?php  
+            foreach ($this->lista  as $list) {                  
+              if(strlen($list['va_nombre'])>27){
+                $strnom=trim(substr($list['va_nombre'], 0, 24));
+                $strnom.='...';
+              }else {
+                $strnom=$list['va_nombre'];
+              } 
+            ?>
+            <li>
+              <div class="plato_r">
+                <div class="mosaic-block cover">
+                  <div class="mosaic-overlay">
+                    <span><?php echo htmlspecialchars($strnom, ENT_QUOTES, 'utf-8'); ?></span>
+                    <img src="<?php if ($list['va_imagen']=='platos-default.png')
+                      {echo $this->host('images') . '/defecto/' . htmlspecialchars($list['va_imagen'], ENT_QUOTES, 'utf-8');}
+                    else
+                        {echo $this->host('images') . '/plato/destacado/' . htmlspecialchars($list['va_imagen'], ENT_QUOTES, 'utf-8');} ?>" title="<?php echo $list['va_nombre'];?>" alt="<?php echo $list['va_nombre'];?>" class="img-plato">
+                  </div>
+                  <a href="/plato/restaurante/<?php echo $this->canonicalUrl($this->canonical($list['va_nombre']), array('suffix' => $list['in_id']));?>" class="mosaic-backdrop" title="<?php echo $list['va_nombre'];?>" alt="<?php echo $list['va_nombre'];?>">
+                    <div class="details">
+                      <h4><?php echo htmlspecialchars($strnom, ENT_QUOTES, 'utf-8'); ?></h4>
+                      <p class="title-details" style="font-weight: bold;">Descripción</p>
+                      <p class="desc-plato font-desc-c"> 
+                        <?php 
+                          if(strlen($list['tx_descripcion'])>100){
+                            $str=trim(substr($list['tx_descripcion'], 0, 97));
+                            $str.='...';
+                          }else {
+                            $str=$list['tx_descripcion'];
+                          }       
+                          echo htmlspecialchars($str, ENT_QUOTES, 'utf-8'); 
+                        ?> 
+                      </p>
+                    </div>
+                  </a>
+                </div>
+                <div class="foo">
+                  <div class="pt">
+                    <!--<p class="pre"><?php echo 'S/. '.  htmlspecialchars($list['va_precio'], ENT_QUOTES, 'utf-8'); ?></p>-->
+                    <p class="com"><?php echo $list['NumeroComentarios'] ?> <i class="icon-comment"></i></p>
+                    <div class="punt">
+                      <div class="puntuaciones c<?php echo $list['Ta_puntaje_in_id'];?>"></div>
+                    </div>
+                  </div>
+                  <p class="nom_res">
+                    <a href="/plato/restaurante/<?php echo $this->canonicalUrl($this->canonical($list['va_nombre']), array('suffix' => $list['in_id']));?>" title="<?php echo $list['va_nombre'];?>" alt="<?php echo $list['va_nombre'];?>"><?php 
+                       if(strlen($list['restaurant_nombre'])>29){
+                       $strres=trim(substr($list['restaurant_nombre'], 0, 26));
+                        $strres.='...';
+                       }else {$strres=$list['restaurant_nombre'];}
+                  echo htmlspecialchars($strres, ENT_QUOTES, 'utf-8'); ?></a></p>
+                  
+                  <p class="h-dist"><?php echo $list['Distrito'];?>  (<?php echo $list['Departamento'];?>)</p>
+                  <p class="dire-hom"><?php echo $list['direccion']; ?>
+                  </p>
+                  <p class="dire-hom"><em class="iphone-dl"><?php  $telefono =  explode(';', $list['telefono']);                
+                  echo htmlspecialchars($telefono[0], ENT_QUOTES, 'utf-8'); ?></em></p>
+                </div>
+              </div>
+            </li>
+          <?php }; ?>   
+        </ul>
+      </div>
+  </div>                     
+<?php
+}                   
+?> 
+
+<script type="text/javascript">
+  $(function(){
+    $('#content-menu-list').infinitescroll({
+      navSelector  : ".pagination",
+      nextSelector : ".pagination a",
+      itemSelector : ".plato_h_list"
+    });
+  });
+  var windw = this;
+    $.fn.followTo = function (pos) {
+      var $this = this,
+      $window = $(windw);
+      $window.scroll(function(e){
+        if ($window.scrollTop() > pos) {
+          $this.css({
+            position: 'fixed',
+            top: 0
+          });
+        } else {
+          $this.css({
+            position: 'relative',
+            top: 0
+          });
+        }
+      });
+    };
+  $('.content-menu-home').followTo(35);
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>  
+<script src="<?php echo $this->basePath()?>/js/vendor/gmaps.min.js"></script> 
+  
+

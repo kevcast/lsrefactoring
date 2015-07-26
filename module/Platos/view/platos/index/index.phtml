@@ -1,0 +1,109 @@
+<div class="span12" style="padding: 10px 0px;">
+    <div class="control-group span8 "> 
+        <form name='form_busqueda'class="form-search" action='#' method ="post" style=" margin: 0px;">
+            <div class="span12">
+             <input type='text' name='texto' id="texto" class="span8 " placeholder="Nombre" />
+            <!--    <input type="submit" class="btn" name="submit" value="Buscar"> -->
+            <button type="submit" class="btn" name="submit" style="">Buscar</button>
+            </div>
+        </form>
+    </div>
+     <div class="control-group span4 text-right" >
+        <a  class="btn" href="/plato/agregar-plato?id=<?php echo $this->idlocal ?>">AGREGAR PLATOS</a>
+    </div>
+
+    </div>
+    <div class="row-fluid">
+<div class="span12" id="flip-scroll">
+<table class="table table-bordered table-hover" id="tabla-platos">
+    <thead class="cf">  
+        <tr>
+            <th>N°</th>
+          <th >#</th> 
+          <th>Destaque</th>
+            <th>Nombre</th>
+             <th>Tipo de plato</th>
+            <th>Precio</th>   
+           <!--  <th>Estado</th>   -->     
+            <th>Restaurante</th>
+            <th>Comentarios</th>
+            <th>Puntaje</th>
+             <th>Operaciones</th>
+        </tr>
+    </thead>
+    
+        <?php $count = 1;
+    foreach ($this->platos  as $plato) :
+        ?>
+        <tr >
+            <td><?php echo $count++ ?></td>
+            <?php if($plato->en_destaque=='si'){ ?>
+                <td><input data-id="<?php echo $this->escapeHtml($plato->in_id); ?>" type="checkbox" class="check-plato" checked="checked"> </td>
+                <td><span id="la<?php echo $this->escapeHtml($plato->in_id); ?>" class='label label-success'> Destacado</span></td>
+                <?php }else{ ?>
+                 <td><input data-id="<?php echo $this->escapeHtml($plato->in_id);?>" type="checkbox" class="check-plato" > </td>
+                <td><span id="la<?php echo $this->escapeHtml($plato->in_id); ?>" class='label label-important'> No Destacado</span></td>   
+                <?php } ?>
+            <td><?php echo $this->escapeHtml($plato->va_nombre); ?></td>
+            <td><?php echo $this->escapeHtml($plato->tipo_plato_va_nombre); ?></td> 
+            <td><?php echo $this->escapeHtml($plato->va_precio); ?></td>            
+           <!--  <td><?php echo $this->escapeHtml($plato->en_estado); ?></td> -->                      
+            <td><?php echo $this->escapeHtml($plato->restaurante_va_nombre); ?></td> 
+            <td><?php echo $this->escapeHtml($plato->cantidad); ?></td>
+            <td><input type="hidden" name="pplato" data-id="<?php echo $this->escapeHtml($plato->in_id); ?>"  value="<?php echo $this->escapeHtml($plato->Ta_puntaje_in_id); ?>"><p id="<?php echo $this->escapeHtml($plato->in_id); ?>"></p> </td>
+             <td><a data-id="<?php echo $this->escapeHtml($plato->in_id); ?>" href="<?php echo $this->basePath();?>/editar-plato/<?php echo $this->idlocal?>/<?php echo $plato->in_id;?>" class='modificar btn btn-success'><i class='icon-edit icon-white'></i>Editar </a>
+<!--                 <td><a data-id="<?php echo $this->escapeHtml($plato->in_id); ?>" href="<?php echo $this->basePath();?>/platos/index/editarplatos?in_id=<?php echo $plato->in_id;?>&va_nombre=<?php echo $plato->va_nombre;?>" class='modificar btn btn-success'><i class='icon-edit icon-white'></i>Editar </a>-->
+            <?php if($plato->en_estado=='activo'){ ?>
+            <a id="<?php echo $this->escapeHtml($plato->in_id); ?>" data-name="desactivo" href="#" class='eli-lo btn btn-danger'><i class='icon-trash icon-white'></i>Desactivar</a></td>
+            <?php }else{ ?>
+            <a id="<?php echo $this->escapeHtml($plato->in_id); ?>" data-name="activo" href="#" class='eli-lo btn btn-primary'><i class='icon-trash icon-white'></i>Activar</a></td>
+            <?php } ?>
+             </tr>
+
+<?php endforeach; ?>
+    
+</table>
+</div>
+</div>
+<!-- <div class="span4">  
+    <div class="modal small hide fade" id="eli-plato" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Confirmación de Eliminación</h3>
+        </div>
+        <div class="modal-body">
+            <p class="error-text"><strong><label id="verplato"></label></strong></p>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+            <button class="btn btn-danger" id="delete-plato">Eliminar</button>
+        </div>
+    </div>
+    
+</div> -->
+  <script src="<?php echo $this->basePath()?>/js/vendor/jquery.raty.min.js"></script>
+<script>
+  $(document).ready(function(){
+      var puntaje = function(item,p){
+     $(item).raty({ 
+                     readOnly: true,
+                      score: p, 
+                      starOff: '<?php echo $this->host('static')?>/img/t2.png',
+                      starOn : '<?php echo $this->host('static')?>/img/t1.png'                         
+      });
+   }
+     $("#tabla-platos").find(':input').each(function() {
+         var elemento= this;
+         var e = $(this).attr("data-id");
+         var ptaje;
+         var idptje;
+         if( elemento.name=="pplato"){
+        idptje = e;
+         ptaje= elemento.value;
+        puntaje("#" + idptje ,ptaje); 
+         }
+        });
+
+  });
+</script>

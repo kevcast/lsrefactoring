@@ -1,0 +1,135 @@
+  <!--   <div class="span2">
+    <div class="btn-group" data-toggle="buttons-radio">
+  <a  class="btn" href="<?php echo $this->basePath();?>/restaurante/index/agregarrestaurante">AGREGAR RESTAURANTE</a>
+    </div>
+    </div> -->
+    <div class="span12">
+   
+     <form name='form_busqueda'class="form-search" action='<?php echo $this->basePath(); ?>/usuario/comentarios/index' method ="post">
+     <div class="control-group span3">
+
+   <label class="ra radio">    
+   POR PUNTAJE :
+  </label>
+   <SELECT NAME="puntaje" SIZE="1" class="span12">
+   <OPTION VALUE="">seleccione:</OPTION>
+ <?php  foreach ($this->puntaje as $puntaje) : ?>
+ <OPTION VALUE="<?php echo $puntaje['in_id']; ?>"><?php echo $puntaje['va_valor']; ?></OPTION>
+<?php endforeach; ?>
+ 
+ </SELECT>
+</div>
+ <div class="control-group span3">
+   <label class="ra radio">
+   POR ESTADO :
+   </label>
+    <SELECT NAME="estado" SIZE="1" class="span12">
+       <OPTION VALUE="">seleccione:</OPTION>
+       <OPTION VALUE="aprobado">aprobado</OPTION>
+       <OPTION VALUE="desaprobado">desaprobado</OPTION>
+    </SELECT>  
+     
+  </div>
+    <div class="control-group span3">
+    <label class="ra radio">POR PLATO: </label>
+    <input type='text' name='texto' id="texto" class="span12" value="<?php if($this->texto){echo $this->texto;}else{}?>"/>
+    </div>
+      <div class="control-group span3">
+    <input type="submit" class="btn boton" name="submit" value="BUSCAR">
+      </div>
+    </form>
+    </div>
+       
+<div class="row-fluid">
+ <div class="span12" id="flip-scroll">
+ <table class="table table-bordered table-hover" id="tabla-puntaje">
+    <thead class="cf">  
+        <tr>
+            <th>#</th> 
+            <th>Comentario</th>
+            <th>Puntaje</th>
+            <th>Plato</th>
+            <th>Usuario</th>
+             <th>Email</th>
+            <th>Operaciones</th>
+        </tr>
+    </thead>
+
+    <?php $count = 1;
+    foreach ($this->comentarios as $cometarios) :
+        ?>
+        <tr>
+            <td><?php echo $count++ ?></td>
+
+            <td><?php echo $this->escapeHtml($cometarios->tx_descripcion); ?></td> 
+            <td ><input type="hidden" name="sp" data-id="<?php echo $this->escapeHtml($cometarios->in_id); ?>" value="<?php echo $this->escapeHtml($cometarios->Ta_puntaje_in_id); ?>" > <p class="punt" id="<?php echo $this->escapeHtml($cometarios->in_id); ?>"></p> </td>
+            <td><?php echo $this->escapeHtml($cometarios->va_nombre); ?></td>
+            <td><?php  if(strlen($cometarios->va_nombre_cliente)>20){
+                           $str=trim(substr($cometarios->va_nombre_cliente, 0, 18));
+                            $str.='..';
+                           }else {$str=$cometarios->va_nombre_cliente;}       
+                    echo htmlspecialchars($str, ENT_QUOTES, 'utf-8'); ?></td>
+            <td><?php echo $cometarios->va_email;?></td>
+         <td><a name="<?php echo $this->escapeHtml($cometarios->tx_descripcion); ?>" data-id="<?php echo $this->escapeHtml($cometarios->in_id); ?>" href="#" class='eli-com btn btn-danger'><i class='icon-trash icon-white'></i>Delete </a>  <a data-id="<?php echo $this->escapeHtml($cometarios->in_id); ?>" href="<?php echo $this->basePath();?>/usuario/comentarios/mensajecomentario/<?php echo $cometarios->va_email;?>/<?php echo $cometarios->va_nombre_cliente;?>" class='modificar btn btn-success'><i class='icon-edit icon-white'></i>Email </a>
+        </tr>
+        </tr>
+
+  <?php endforeach; ?>
+
+
+</table>
+    <?php echo (count($this->comentarios)> 0)?$this->paginationControl($this->comentarios, 'Sliding', 'platos/index/paginador.phtml',array('variable'=>'/usuario/comentarios/index?')):""; ?>
+<div class="span10" style="padding: 10px 0; margin:0px;">  
+     <?php $estado=$_POST["puntaje"];
+           $valor=$_POST["estado"];  
+           $descripcion=$_POST["texto"];                 
+      ?>
+    <a onClick="location='<?php echo $this->basePath(); ?>/usuario/comentarios/comentariosexcel?estado=<?php echo $valor; 
+  ?>&puntaje=<?php echo $estado; ?>&texto=<?php echo $descripcion; ?>'" class="btn" >Exportar Datos </a></div> 
+                
+</div>
+</div>
+</div>
+<div class="span4">
+  
+    <div class="modal small hide fade" id="eli-com" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="myModalLabel">Confirmación de Eliminación</h3>
+        </div>
+        <div class="modal-body">
+            <p class="error-text"><strong><label id="vercom"></label></strong></p>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancelar</button>
+            <button class="btn btn-danger" id="delete-comentario">Eliminar</button>
+        </div>
+    </div>
+    
+</div>
+<script src="<?php echo $this->basePath()?>/js/vendor/jquery.raty.min.js"></script>
+<script>
+  $(document).ready(function(){
+      var puntaje = function(item,p){
+     $(item).raty({ 
+                     readOnly: true,
+                      score: p, 
+                      starOff: '<?php echo $this->host('static')?>/img/t1.png',
+                      starOn : '<?php echo $this->host('static')?>/img/t2.png'                         
+      });
+   }
+     $("#tabla-puntaje").find(':input').each(function() {
+         var elemento= this;
+         var e = $(this).attr("data-id");
+         var ptaje;
+         var idptje;
+         if( elemento.name=="sp"){
+        idptje = e;
+         ptaje= elemento.value;
+        puntaje("#" + idptje ,ptaje); 
+         }
+        });
+
+  });
+</script>
