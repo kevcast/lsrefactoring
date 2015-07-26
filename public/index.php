@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL & ~E_NOTICE);
+
 ini_set('session.cookie_httponly', 1);
 ini_set('expose_php','off');
 header('X-Powered-By: Innovations Systems Group');
